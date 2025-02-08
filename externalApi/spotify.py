@@ -1,7 +1,9 @@
 
+import multiprocessing
 import os
 from typing import List
 from dotenv import load_dotenv
+from joblib import Parallel, delayed
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -29,9 +31,17 @@ class AlbumInfoDTO:
     def __str__(self):
         return f"Album: {self.nome} - {self.artista} (Rilasciato: {self.dataRilascio}, Copertina: {self.copertina})"
 
+def getFormattedDTOfromTrackInfo(x):
+    return PlaylistTracksDTO(
+        id=x["id"],
+        artista=x["artists"][0]["name"],
+        canzone=x["name"],
+        numeroTraccia=x["track_number"],
+        youtubeLink=os.getenv('YOUTUBE_PREFIX') + fromYoutubeSearchGetLink(x["name"] + " " + x["artists"][0]["name"] + "lyrics"),
+        disco=x["disc_number"]
+    )
 
 def getTracksFromPlaylistUrl(url:str) -> List[PlaylistTracksDTO]:
-
     sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_secret = os.getenv('SPOTIPY_CLIENT_SECRET'), client_id= os.getenv('SPOTIPY_CLIENT_ID')))
     album_id = url.split('/')[-1].split("?")[0]
 
@@ -39,17 +49,9 @@ def getTracksFromPlaylistUrl(url:str) -> List[PlaylistTracksDTO]:
 
     items = []
     try:
-        for x in spotifyPlaylistInfo["items"]:
-            items.append(PlaylistTracksDTO(
-                id=x["id"],
-                artista=x["artists"][0]["name"],
-                canzone=x["name"],
-                numeroTraccia=x["track_number"],
-                youtubeLink=os.getenv('YOUTUBE_PREFIX') + fromYoutubeSearchGetLink(x["name"] + " " + x["artists"][0]["name"] + "lyrics"),
-                disco=x["disc_number"]
-            ))
-
+        items = Parallel(n_jobs=multiprocessing.cpu_count())(delayed(getFormattedDTOfromTrackInfo)(i) for i in spotifyPlaylistInfo["items"])
         return items
+
     except Exception as e:
         print(e)
 
