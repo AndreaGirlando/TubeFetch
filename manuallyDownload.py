@@ -1,9 +1,9 @@
 import datetime
 from externalApi.spotify import getAlbumInfoFromPlaylistUrl, getTracksFromPlaylistUrl
 from fileDownload.download import download_mp3
+import os
 
-
-spotifyPlaylist = "https://open.spotify.com/intl-it/album/5xpkqSPQbp4qTmoaKUHyXp?si=Tk74DxVPQK6GYMaVADqgww"
+spotifyPlaylist = os.getenv("PLAYLIST_TO_DOWNLOAD")
 
 print("L'album che sto scaricando è il seguente:")
 print(getAlbumInfoFromPlaylistUrl(spotifyPlaylist))
