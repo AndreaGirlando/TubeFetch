@@ -1,21 +1,24 @@
 import datetime
-from externalApi.spotify import getAlbumInfoFromPlaylistUrl, getTracksFromPlaylistUrl
-from fileDownload.download import download_mp3
-import os
 
-spotifyPlaylist = os.getenv("PLAYLIST_TO_DOWNLOAD")
+from externalApi.spotify import getPlaylistOrAlbumData, getTracksAlbumOrPlaylistUrl
+from fileDownload.download import download_mp3
+
+spotifyPlaylist = "https://open.spotify.com/intl-it/album/1imajJsesRxTvHsI6lErcY?si=L33FcJk4RrmaI4qN3TwKEA"
 
 print("L'album che sto scaricando è il seguente:")
-print(getAlbumInfoFromPlaylistUrl(spotifyPlaylist))
+tempInfo = getPlaylistOrAlbumData(spotifyPlaylist)
+print(tempInfo)
 print("\n\n")
 
 
-tracks = getTracksFromPlaylistUrl(spotifyPlaylist)
+tracks = getTracksAlbumOrPlaylistUrl(spotifyPlaylist)
+
+
 
 print("\n\n")
 start = datetime.datetime.now()
 for x in tracks:
-    download_mp3(x.youtubeLink, "1")
+    download_mp3(x.youtubeLink, tempInfo.nome + " - " + tempInfo.artista)
     print("\n\nHo finito di scaricare:")
     print(x)
 

@@ -16,7 +16,7 @@ RUN apt-get install -y python3-pip --only-upgrade
 RUN python3 -m pip install --no-cache-dir -r requirements.txt --break-system-packages
 
 # Imposta la variabile d'ambiente per Flask
-ENV FLASK_APP=flaskApi
+ENV FLASK_APP=api
 
 EXPOSE 5000
 

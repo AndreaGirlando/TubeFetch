@@ -1,0 +1,11 @@
+services:
+  flask-app:
+    build: .
+    container_name: flask_api_container
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env
+    restart: unless-stopped
