@@ -42,6 +42,8 @@ def downloadSpotifyAlbumOrPlaylist():
     try:
         uniqueId = str(int(time.time()))
         spotifyLink = request.args.get("spotifyLink")
+        if(len(str(spotifyLink)) == 0):
+            return make_response(f"Errore",500)
         tracks = getTracksAlbumOrPlaylistUrl(spotifyLink)
         for x in tracks:
             download_mp3(x.youtubeLink, uniqueId)
@@ -58,4 +60,4 @@ def downloadSpotifyAlbumOrPlaylist():
 
 if __name__ == '__main__':
     shutil.rmtree("songs",ignore_errors=True)
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
