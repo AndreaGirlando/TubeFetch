@@ -1,5 +1,29 @@
-<div class="container">
-  <div class="row justify-content-center">
-    Che cosa vuoi fare?
+<div class="container d-flex justify-content-center align-items-center mt-5">
+  <div class="row flex-column justify-content-center align-items-center fs-5 bg-nv-custom text-white p-4 rounded shadow-lg" style="max-width: 500px;">
+    <img src="assets/logo.png" class="logo" >
+    <button (click)="changeLinkInputVisibility('spotify')" type="button" style="background-color: var(--sp-color);" class="btn btn-success w-100 fs-5 mt-3 shadow-sm btn-hover border-0">
+      <i class="bi bi-spotify"></i> Scarica una Playlist/Album da Spotify
+    </button>
+    <button (click)="changeLinkInputVisibility('spotify')" type="button" style="background-color: var(--sp-color);" class="btn btn-success w-100 fs-5 mt-3 shadow-sm btn-hover border-0">
+      <i class="bi bi-spotify"></i> Scarica una canzone da Spotify
+    </button>
+    <button (click)="changeLinkInputVisibility('youtube')" type="button" style="background-color: var(--yt-color);" class="btn btn-danger w-100 fs-5 mt-3 shadow-sm btn-hover border-0">
+      <i class="bi bi-youtube"></i> Scarica una Playlist/Album da YouTube
+    </button>
+    <button (click)="changeLinkInputVisibility('youtube')" type="button" style="background-color: var(--yt-color);" class="btn btn-danger w-100 fs-5 mt-3 shadow-sm btn-hover border-0">
+      <i class="bi bi-youtube"></i> Scarica una canzone da YouTube
+    </button>
+    <div class="input-group p-0 mt-3" *ngIf="isLinkInputVisibile">
+      <input type="text" class="form-control" placeholder="Inserisci qui il link" aria-label="input" [(ngModel)]="link" aria-describedby="button-addon2">
+      <button
+          [style.background-color]="sendButtonColor"
+          class="btn btn-danger fs-5 border-0"
+          type="button"
+          id="button-addon2"
+          (click)="sendInfo()"
+        >
+        <i class="bi bi-arrow-right-circle"></i>
+      </button>
+    </div>
   </div>
 </div>

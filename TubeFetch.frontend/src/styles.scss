@@ -1,7 +1,25 @@
 @import url("https://fonts.googleapis.com/css?family=Montserrat:500,700");
-html {
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+
+
+:root {
+  --primary: #191716;
+  --secondary: #E4572E;
+  --tertiary: #A3A9AA;
+  --fontColor: black;
+  --yt-color: #f03;
+  --sp-color: #1DB954
+}
+
+html,body {
+  background-color: var(--primary) !important;
   font-family: 'Montserrat' !important;
   font-weight: 500;
+  color: var(--fontColor) !important;
   width: 100%;
   min-height: 100vh;
+}
+
+.bg-nv-custom{
+  background-color: var(--tertiary);
 }

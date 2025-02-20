@@ -172,3 +172,4 @@ cython_debug/
 
 /songs
 /node_modules
+.env
