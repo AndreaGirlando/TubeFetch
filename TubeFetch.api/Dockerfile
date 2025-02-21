@@ -8,7 +8,7 @@ COPY . /usr/src/app
 RUN apt-get update && apt-get install -y \
     python3 python3-pip python3-venv ffmpeg \
     && apt-get clean
-
+RUN apt-get install -y libpq-dev
 # Installa le dipendenze di Python
 RUN python3 -m pip install --no-cache-dir -r requirements.txt --break-system-packages
 

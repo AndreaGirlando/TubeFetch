@@ -9,4 +9,10 @@ services:
     env_file:
       - .env
     restart: unless-stopped
+  angular-frontend:
+    build: TubeFetch.frontend/.
+    container_name: TubeFetch.frontend
+    ports:
+      - "4201:4200"
+    restart: unless-stopped
 

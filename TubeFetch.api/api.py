@@ -2,21 +2,36 @@ import time
 import shutil
 import zipfile
 from flask import Flask, request, send_file, make_response
+from flask_cors import CORS
 import os
 import uuid
 from werkzeug.utils import secure_filename
 
-from externalApi.spotify import getPlaylistOrAlbumData, getTracksAlbumOrPlaylistUrl
+from externalApi.spotify import getPlaylistOrAlbumData, getTrackData, getTracksAlbumOrPlaylistUrl
 from externalApi.utils import zipAlbumOrPlaylist
 from fileDownload.download import download_mp3
 
 app = Flask(__name__)
+CORS(app)
 songsPath = "songs"  # Senza backslash errati
 
-@app.route('/downloadOneTrack?youtubeCode=<youtubeCode>')
-def downloadOneTrack(youtubeCode):
+#! Track endpoint
+
+@app.route('/getTrackInfo')
+def getTrackInfo():
+    try:
+        spotifyLink = request.args.get("spotifyLink")
+        print(spotifyLink)
+        res = getTrackData(spotifyLink)
+        return make_response(res.toJson(),200)
+    except Exception as e:
+        return make_response(f"Error: {str(e)}", 500)
+
+@app.route('/downloadOneTrack')
+def downloadOneTrack():
     try:
         uniqueId = str(uuid.uuid1())
+        youtubeCode = request.args.get("youtubeCode")
         songName = download_mp3("https://www.youtube.com/watch?v=" + str(youtubeCode), uniqueId) + ".mp3"
         filename = os.path.join(songsPath, uniqueId, songName)
 
@@ -52,7 +67,7 @@ def downloadSpotifyAlbumOrPlaylist():
 
         res = send_file(os.path.abspath(f"songs/{uniqueId}.zip"))
 
-        shutil.rmtree(f"songs/{uniqueId}",ignore_errors=True)
+        shutil.rmtree(f"songs",ignore_errors=True)
 
         return res
     except Exception as e:

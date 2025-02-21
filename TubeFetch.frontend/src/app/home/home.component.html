@@ -1,29 +1,138 @@
-<div class="container d-flex justify-content-center align-items-center mt-5">
-  <div class="row flex-column justify-content-center align-items-center fs-5 bg-nv-custom text-white p-4 rounded shadow-lg" style="max-width: 500px;">
-    <img src="assets/logo.png" class="logo" >
-    <button (click)="changeLinkInputVisibility('spotify')" type="button" style="background-color: var(--sp-color);" class="btn btn-success w-100 fs-5 mt-3 shadow-sm btn-hover border-0">
-      <i class="bi bi-spotify"></i> Scarica una Playlist/Album da Spotify
-    </button>
-    <button (click)="changeLinkInputVisibility('spotify')" type="button" style="background-color: var(--sp-color);" class="btn btn-success w-100 fs-5 mt-3 shadow-sm btn-hover border-0">
-      <i class="bi bi-spotify"></i> Scarica una canzone da Spotify
-    </button>
-    <button (click)="changeLinkInputVisibility('youtube')" type="button" style="background-color: var(--yt-color);" class="btn btn-danger w-100 fs-5 mt-3 shadow-sm btn-hover border-0">
-      <i class="bi bi-youtube"></i> Scarica una Playlist/Album da YouTube
-    </button>
-    <button (click)="changeLinkInputVisibility('youtube')" type="button" style="background-color: var(--yt-color);" class="btn btn-danger w-100 fs-5 mt-3 shadow-sm btn-hover border-0">
-      <i class="bi bi-youtube"></i> Scarica una canzone da YouTube
-    </button>
-    <div class="input-group p-0 mt-3" *ngIf="isLinkInputVisibile">
-      <input type="text" class="form-control" placeholder="Inserisci qui il link" aria-label="input" [(ngModel)]="link" aria-describedby="button-addon2">
-      <button
-          [style.background-color]="sendButtonColor"
-          class="btn btn-danger fs-5 border-0"
-          type="button"
-          id="button-addon2"
-          (click)="sendInfo()"
-        >
-        <i class="bi bi-arrow-right-circle"></i>
+<div class="container bg-nv-custom rounded shadow-lg mb-2" style="height: 90%;">
+
+  <div class="row" *ngIf="!visibility.selectionVisibility">
+    <div class="p-1">
+      <button type="button" class="btn btn-primary fs-5 shadow-sm btn-hover border-0" (click)="backToSelection()">
+        <i class="bi bi-arrow-left"></i>
       </button>
+    </div>
+  </div>
+
+  <div class="row flex-column justify-content-center align-items-center fs-5 text-white p-4" *ngIf="visibility.selectionVisibility">
+
+    <div class="col-12 fs-4 text-center">
+      <button (click)="changeLinkInputVisibility('spotify','playlist')" type="button"
+        [ngStyle]="{'transform': 'scale(' +isButtonSelected('spotify','playlist')+ ')' }"
+        style="background-color: var(--sp-color);" class="btn btn-success w-75 fs-5 mt-3 btn-hover border-0">
+        <i class="bi bi-spotify"></i> Scarica una Playlist/Album da Spotify
+      </button>
+    </div>
+
+    <div class="col-12 fs-4 text-center">
+      <button (click)="changeLinkInputVisibility('spotify','track')" type="button"
+        [ngStyle]="{'transform': 'scale(' +isButtonSelected('spotify','track')+ ')' }"
+        style="background-color: var(--sp-color);" class="btn btn-success w-75 fs-5 mt-3 btn-hover border-0">
+        <i class="bi bi-spotify"></i> Scarica una canzone da Spotify
+      </button>
+    </div>
+
+    <div class="col-12 fs-4 text-center">
+      <button (click)="changeLinkInputVisibility('youtube','playlist')" type="button"
+        [ngStyle]="{'transform': 'scale(' +isButtonSelected('youtube','playlist')+ ')' }"
+        style="background-color: var(--yt-color);" class="btn btn-danger w-75 fs-5 mt-3 btn-hover border-0">
+        <i class="bi bi-youtube"></i> Scarica una Playlist/Album da YouTube
+      </button>
+    </div>
+
+    <div class="col-12 fs-4 text-center">
+      <button (click)="changeLinkInputVisibility('youtube','track')" type="button"
+        [ngStyle]="{'transform': 'scale(' +isButtonSelected('youtube','track')+ ')' }"
+        style='background-color: var(--yt-color);' class="btn btn-danger w-75 fs-5 mt-3 btn-hover border-0">
+        <i class="bi bi-youtube"></i> Scarica una canzone da YouTube
+      </button>
+    </div>
+
+    <div class="col-12 fs-4 text-center w-75">
+      <div class="input-group p-0 mt-3" *ngIf="isLinkInputVisibile">
+        <input type="text" class="form-control bg-dark text-white" placeholder="Inserisci qui il link" aria-label="input" [(ngModel)]="link" aria-describedby="button-addon2">
+        <button
+            [style.background-color]="sendButtonColor"
+            class="btn btn-danger fs-5 border-0"
+            type="button"
+            id="button-addon2"
+            (click)="sendInfo()"
+            [disabled]="sendButtonDisabled"
+          >
+          <i class="bi bi-arrow-right-circle"></i>
+        </button>
+      </div>
+      <div class="mt-2 text-muted fs-6" *ngIf="getTypeOfLink() != null && getTypeOfLink() != this.params.type">
+        Questo è il link di un <span class="text-warning">{{getTypeOfLink()}}</span> e stai cercando di scaricare una <span class="text-warning">{{this.params.type}}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ? Album/Playlist -->
+  <div class="row flex-column justify-content-center align-items-center fs-5 text-white" *ngIf="visibility.playlistVisibiliy">
+    <div class="container">
+
+      <div class="row justify-content-center mb-2">
+        <img [src]="linkInfo.copertina" style="border-radius:30px; width: 40%;height:40%">
+      </div>
+      <div class="row justify-content-center display-6 fs-4">
+        {{linkInfo.nome}}
+      </div>
+      <div class="row justify-content-center mb-2 text-muted">
+        {{linkInfo.artista}}
+      </div>
+
+      <div class="row justify-content-center text-center mb-2">
+        <button type="button" class="btn btn-warning w-50 p-2 rounded-4 fs-5 btn-hover" (click)="downloadAllTracks()"><i class="bi bi-download"></i> Scarica tutto</button>
+      </div>
+      <div class="row justify-content-center text-center mb-5">
+        <button type="button" class="btn btn-warning w-50 p-2 rounded-4 fs-5 btn-hover" (click)="downloadAllTracksZip()"><i class="bi bi-download"></i> Scarica tutto (.zip)</button>
+      </div>
+
+      <div class="row justify-content-center align-items-center text-center">
+        <table class="table table-bordered table-striped w-75 fs-6">
+
+          <thead class="table align-middle">
+            <tr>
+              <th scope="col">Disco - Numero traccia</th>
+              <th scope="col">Titolo</th>
+              <th scope="col">Azioni</th>
+            </tr>
+          </thead>
+
+          <tbody class="table align-middle">
+            <tr *ngFor="let item of linkInfo.tracks">
+              <td>{{item.disco}} - {{item.numeroTraccia}}</td>
+              <td>{{item.titolo}}</td>
+              <td>
+                <button
+                  type="button"
+                  style="background-color: #ffc107;"
+                  class="btn btn-warning text-dark btn-hover"
+                  (click)="downloadOneTrack(item)"
+                  ><i class="bi bi-download"></i> Scarica
+                </button>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="row flex-column justify-content-center align-items-center fs-5 text-white p-4"  *ngIf="visibility.singleTrackVisibility">
+    <div class="container">
+
+      <div class="row justify-content-center mb-2">
+        <img [src]="linkInfo.copertina" style="border-radius:30px; width: 40%;height:40%">
+      </div>
+      <div class="row justify-content-center display-6 fs-4">
+        {{linkInfo.titolo}}
+      </div>
+      <div class="row justify-content-center mb-2 text-muted">
+        {{linkInfo.artista}}
+      </div>
+
+      <div class="row justify-content-center text-center mb-2">
+        <button type="button" class="btn btn-warning w-50 p-2 rounded-4 fs-5 btn-hover" (click)="downloadOneTrack(linkInfo)"><i class="bi bi-download"></i> Scarica </button>
+      </div>
+
     </div>
   </div>
 </div>

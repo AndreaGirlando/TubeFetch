@@ -23,3 +23,14 @@ html,body {
 .bg-nv-custom{
   background-color: var(--tertiary);
 }
+
+.btn-primary{
+  background-color: var(--primary) !important;
+  border-color: var(--tertiary) !important;
+}
+
+.copertinaAlbum {
+
+  border-radius: 20px;
+  object-fit: cover; /* Assicura che l'immagine copra l'intera area senza deformarsi */
+}
