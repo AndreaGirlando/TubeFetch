@@ -82,7 +82,12 @@ def downloadSpotifyAlbumOrPlaylist():
             return make_response(f"Errore",500)
         tempInfo = getPlaylistOrAlbumData(spotifyLink)
         for x in tempInfo.tracks:
-            download_mp3(x.youtubeLink, uniqueId)
+            try:
+                download_mp3(x.youtubeLink, uniqueId)
+            except Exception as e:
+                print(f"Errore durante il download del brano {x.youtubeLink}: {e}")
+            continue
+
 
         zipAlbumOrPlaylist(uniqueId)
 
