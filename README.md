@@ -1,7 +1,7 @@
 # TubeFetch
 
 <div align="center">
-  <img src="https://github.com/AndreaGirlando/TubeFetch/blob/main/TubeFetch.frontend/public/assets/logo.png" alt="Logo TubeFetch" width="200"/>
+  <img style="background-color:#A3A9AA" src="https://github.com/AndreaGirlando/TubeFetch/blob/main/TubeFetch.frontend/public/assets/logo.png" alt="Logo TubeFetch" width="200"/>
 </div>
 
 ## Descrizione
