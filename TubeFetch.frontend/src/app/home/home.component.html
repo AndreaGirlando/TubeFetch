@@ -57,7 +57,9 @@
         </button>
       </div>
       <div class="mt-2 text-muted fs-6" *ngIf="getTypeOfLink() != null && getTypeOfLink() != this.params.type">
-        Questo è il link di un <span class="text-warning">{{getTypeOfLink()}}</span> e stai cercando di scaricare una <span class="text-warning">{{this.params.type}}</span>
+        Questo è il link di una
+        <span class="text-warning">{{getTypeOfLink() == "track"? "traccia":getTypeOfLink()}}</span>
+        e stai cercando di scaricare una <span class="text-warning">{{this.params.type == "track"? "traccia":this.params.type}}</span>
       </div>
     </div>
 
@@ -99,13 +101,13 @@
             <tr *ngFor="let item of linkInfo.tracks">
               <td>{{item.disco}} - {{item.numeroTraccia}}</td>
               <td>{{item.titolo}}</td>
-              <td>
+              <td class="d-flex justify-content-center">
                 <button
                   type="button"
                   style="background-color: #ffc107;"
-                  class="btn btn-warning text-dark btn-hover"
+                  class="btn btn-warning text-dark btn-hover d-flex align-items-center justify-content-center"
                   (click)="downloadOneTrack(item)"
-                  ><i class="bi bi-download"></i> Scarica
+                  ><i class="bi bi-download me-1"></i> Scarica
                 </button>
               </td>
             </tr>

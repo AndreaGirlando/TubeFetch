@@ -41,7 +41,7 @@ export class HomeComponent {
   sendInfo(){
     console.log(this.params)
     if(this.params.type == "playlist" && this.params.sito == "spotify"){
-      this.apiService.getPlaylistOrAlbumInfo(this.link).subscribe({
+      this.apiService.getSpotifyPlaylistOrAlbumInfo(this.link).subscribe({
         next: (data:any) => {
           this.linkInfo = data
           this.visibility.selectionVisibility = false;
@@ -50,7 +50,7 @@ export class HomeComponent {
       })
     }
     if(this.params.type == "track" && this.params.sito == "spotify"){
-      this.apiService.getTrackInfo(this.link).subscribe({
+      this.apiService.getSpotifyTrackInfo(this.link).subscribe({
         next: (data:any) => {
           this.linkInfo = data
           this.visibility.selectionVisibility = false;
@@ -59,10 +59,22 @@ export class HomeComponent {
       })
     }
     if(this.params.type == "playlist" && this.params.sito == "youtube"){
-      alert("Non implementato")
+      this.apiService.getYoutubePlaylistOrAlbumInfo(this.link).subscribe({
+        next: (data:any) => {
+          this.linkInfo = data
+          this.visibility.selectionVisibility = false;
+          this.visibility.playlistVisibiliy = true;
+        }
+      })
     }
     if(this.params.type == "track" && this.params.sito == "youtube"){
-      alert("Non implementato")
+      this.apiService.getYoutubeTrackInfo(this.link).subscribe({
+        next: (data:any) => {
+          this.linkInfo = data
+          this.visibility.selectionVisibility = false;
+          this.visibility.singleTrackVisibility = true;
+        }
+      })
     }
 
   }
@@ -84,14 +96,26 @@ export class HomeComponent {
     });
   }
   downloadAllTracksZip(){
-    this.apiService.downloadSpotifyAlbumOrPlaylist(this.link).subscribe(response =>{
-      const fileUrl = URL.createObjectURL(response);
-      const a = document.createElement('a');
-      a.href = fileUrl;
-      a.download = this.linkInfo.artista+" - "+ this.linkInfo.nome +".zip";
-      a.click();
-      URL.revokeObjectURL(fileUrl);
-    })
+    if(this.params.sito == "spotify"){
+      this.apiService.downloadSpotifyAlbumOrPlaylist(this.link).subscribe(response =>{
+        const fileUrl = URL.createObjectURL(response);
+        const a = document.createElement('a');
+        a.href = fileUrl;
+        a.download = this.linkInfo.artista+" - "+ this.linkInfo.nome +".zip";
+        a.click();
+        URL.revokeObjectURL(fileUrl);
+      })
+    }
+    if(this.params.sito == "youtube"){
+      this.apiService.downloadYoutubeAlbumOrPlaylist(this.link).subscribe(response =>{
+        const fileUrl = URL.createObjectURL(response);
+        const a = document.createElement('a');
+        a.href = fileUrl;
+        a.download = this.linkInfo.artista+" - "+ this.linkInfo.nome +".zip";
+        a.click();
+        URL.revokeObjectURL(fileUrl);
+      })
+    }
   }
 
   backToSelection(){
@@ -117,16 +141,37 @@ export class HomeComponent {
 
   getTypeOfLink(){
     var res = null;
-    if(this.link.includes("track")){
-      res = "track"
-    }
-    if(this.link.includes("playlist") || this.link.includes("album")){
-      res = "playlist"
-    }
-    if(res != this.params.type){
+    if (this.link.length == 0){
       this.sendButtonDisabled = true
+      return null
     }else{
       this.sendButtonDisabled = false
+    }
+    if(this.params.sito == "spotify"){
+      if(this.link.includes("track")){
+        res = "track"
+      }
+      if(this.link.includes("playlist") || this.link.includes("album")){
+        res = "playlist"
+      }
+      if(res != this.params.type){
+        this.sendButtonDisabled = true
+      }else{
+        this.sendButtonDisabled = false
+      }
+    }
+    if(this.params.sito == "youtube"){
+      if(this.link.includes("list")){
+        res = "playlist"
+      }else{
+        res = "track"
+      }
+      console.log(res, this.params.type)
+      if(res != this.params.type){
+        this.sendButtonDisabled = true
+      }else{
+        this.sendButtonDisabled = false
+      }
     }
     return res
   }

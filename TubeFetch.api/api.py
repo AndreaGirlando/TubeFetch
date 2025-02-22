@@ -1,40 +1,53 @@
-import time
-import shutil
-import zipfile
+import time,os,shutil
 from flask import Flask, request, send_file, make_response
 from flask_cors import CORS
-import os
-import uuid
-from werkzeug.utils import secure_filename
-
-from externalApi.spotify import getPlaylistOrAlbumData, getTrackData, getTracksAlbumOrPlaylistUrl
+from externalApi.spotify import fromSpotifyLinkGetTrackInfo, getPlaylistOrAlbumData
 from externalApi.utils import zipAlbumOrPlaylist
+from externalApi.youtube import fromYoutubeLinkGetTrackInfo, fromYoutubePlaylistGetInfo
 from fileDownload.download import download_mp3
 
 app = Flask(__name__)
 CORS(app)
 songsPath = "songs"  # Senza backslash errati
 
-#! Track endpoint
+@app.route('/rmSongs')
+def rmSongs():
+    try:
+        shutil.rmtree(f"songs",ignore_errors=True)
+        return make_response("Ok",200)
+    except Exception as e:
+        return make_response(f"Error: {str(e)}", 500)
 
-@app.route('/getTrackInfo')
-def getTrackInfo():
+#! Track endpoint
+@app.route('/getSpotifyTrackInfo')
+def getSpotifyTrackInfo():
     try:
         spotifyLink = request.args.get("spotifyLink")
         print(spotifyLink)
-        res = getTrackData(spotifyLink)
+        res = fromSpotifyLinkGetTrackInfo(spotifyLink)
         return make_response(res.toJson(),200)
     except Exception as e:
         return make_response(f"Error: {str(e)}", 500)
 
+
+@app.route('/getYoutubeTrackInfo')
+def getYoutubeTrackInfo():
+    try:
+        youtubeLink = request.args.get("youtubeLink")
+        # print(youtubeLink)
+        res = fromYoutubeLinkGetTrackInfo(youtubeLink)
+        return make_response(res.toJson(),200)
+    except Exception as e:
+        return make_response(f"Error: {str(e)}", 500)
+
+
 @app.route('/downloadOneTrack')
 def downloadOneTrack():
     try:
-        uniqueId = str(uuid.uuid1())
+        uniqueId = str(int(time.time()))
         youtubeCode = request.args.get("youtubeCode")
-        songName = download_mp3("https://www.youtube.com/watch?v=" + str(youtubeCode), uniqueId) + ".mp3"
-        filename = os.path.join(songsPath, uniqueId, songName)
-
+        filename = download_mp3("https://www.youtube.com/watch?v=" + str(youtubeCode), uniqueId) + ".mp3"
+        # print(os.path.abspath(filename))
         if os.path.isfile(filename):
             return send_file(os.path.abspath(filename), as_attachment=True)
         else:
@@ -42,12 +55,20 @@ def downloadOneTrack():
     except Exception as e:
         return make_response(f"Error: {str(e)}", 500)
 
-#! Album/Playlist endpoints
 
-@app.route('/getPlaylistOrAlbumInfo')
-def getPlaylistOrAlbumInfo():
+#! Album/Playlist endpoints
+@app.route('/getSpotifyPlaylistOrAlbumInfo')
+def getSpotifyPlaylistOrAlbumInfo():
     try:
         temp = getPlaylistOrAlbumData(request.args.get("spotifyLink"))
+        return make_response(temp.toJson(), 200)
+    except Exception as e:
+        return make_response(f"Error: {str(e)}", 500)
+
+@app.route('/getYoutubePlaylistOrAlbumInfo')
+def getYoutubePlaylistOrAlbumInfo():
+    try:
+        temp = fromYoutubePlaylistGetInfo(request.args.get("youtubeLink"))
         return make_response(temp.toJson(), 200)
     except Exception as e:
         return make_response(f"Error: {str(e)}", 500)
@@ -59,8 +80,28 @@ def downloadSpotifyAlbumOrPlaylist():
         spotifyLink = request.args.get("spotifyLink")
         if(len(str(spotifyLink)) == 0):
             return make_response(f"Errore",500)
-        tracks = getTracksAlbumOrPlaylistUrl(spotifyLink)
-        for x in tracks:
+        tempInfo = getPlaylistOrAlbumData(spotifyLink)
+        for x in tempInfo.tracks:
+            download_mp3(x.youtubeLink, uniqueId)
+
+        zipAlbumOrPlaylist(uniqueId)
+
+        res = send_file(os.path.abspath(f"songs/{uniqueId}.zip"))
+
+        shutil.rmtree(f"songs",ignore_errors=True)
+
+        return res
+    except Exception as e:
+        return make_response(f"Error: {str(e)}", 500)
+@app.route('/downloadYoutubeAlbumOrPlaylist')
+def downloadYoutubeAlbumOrPlaylist():
+    try:
+        uniqueId = str(int(time.time()))
+        youtubeLink = request.args.get("youtubeLink")
+        if(len(str(youtubeLink)) == 0):
+            return make_response(f"Errore",500)
+        tempInfo = fromYoutubePlaylistGetInfo(youtubeLink)
+        for x in tempInfo.tracks:
             download_mp3(x.youtubeLink, uniqueId)
 
         zipAlbumOrPlaylist(uniqueId)

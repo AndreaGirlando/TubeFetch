@@ -7,19 +7,28 @@ import { Injectable } from '@angular/core';
 export class ApiService {
   urlApi:string = "http://localhost:5000/"
 
-  getPlaylistOrAlbumInfo(spotifyLink:string){
-    return this.http.get(this.urlApi+"getPlaylistOrAlbumInfo?spotifyLink="+spotifyLink)
+  getSpotifyPlaylistOrAlbumInfo(spotifyLink:string){
+    return this.http.get(this.urlApi+"getSpotifyPlaylistOrAlbumInfo?spotifyLink="+spotifyLink)
   }
-  downloadOneTrack(youtubeCode:string){
-    return this.http.get(this.urlApi+"/downloadOneTrack?youtubeCode="+youtubeCode,{headers: new HttpHeaders(),responseType: 'blob'})
+  getYoutubePlaylistOrAlbumInfo(youtubeLink:string){
+    return this.http.get(this.urlApi+"getYoutubePlaylistOrAlbumInfo?youtubeLink="+youtubeLink)
   }
   downloadSpotifyAlbumOrPlaylist(spotifyLink:string){
-    return this.http.get(this.urlApi+"/downloadSpotifyAlbumOrPlaylist?spotifyLink="+spotifyLink,{headers: new HttpHeaders(),responseType: 'blob'})
+    return this.http.get(this.urlApi+"downloadSpotifyAlbumOrPlaylist?spotifyLink="+spotifyLink,{headers: new HttpHeaders(),responseType: 'blob'})
   }
-  getTrackInfo(spotifyLink:string){
-    return this.http.get(this.urlApi+"/getTrackInfo?spotifyLink="+spotifyLink)
+  downloadYoutubeAlbumOrPlaylist(youtubeLink:string){
+    return this.http.get(this.urlApi+"downloadYoutubeAlbumOrPlaylist?youtubeLink="+youtubeLink,{headers: new HttpHeaders(),responseType: 'blob'})
+  }
+  getSpotifyTrackInfo(spotifyLink:string){
+    return this.http.get(this.urlApi+"getSpotifyTrackInfo?spotifyLink="+spotifyLink)
+  }
+  getYoutubeTrackInfo(youtubeLink:string){
+    return this.http.get(this.urlApi+"getYoutubeTrackInfo?youtubeLink="+youtubeLink)
   }
 
+  downloadOneTrack(youtubeCode:string){
+    return this.http.get(this.urlApi+"downloadOneTrack?youtubeCode="+youtubeCode,{headers: new HttpHeaders(),responseType: 'blob'})
+  }
 
   constructor(private http:HttpClient) { }
 
