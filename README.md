@@ -1,9 +1,5 @@
 # TubeFetch
 
-<div align="center">
-  <img style="background-color:#A3A9AA" src="https://github.com/AndreaGirlando/TubeFetch/blob/main/TubeFetch.frontend/public/assets/logoBG.png" alt="Logo TubeFetch" width="200"/>
-</div>
-
 ## Descrizione
 
 **TubeFetch** è un progetto che permette di scaricare canzoni da una playlist di Spotify o YouTube. È possibile scaricare l'intera playlist o scegliere delle canzoni specifiche da scaricare. Il progetto è composto da due parti principali: il **frontend** e le **API**. Entrambe le parti possono essere avviate tramite **Docker** utilizzando il comando `docker compose up`.
