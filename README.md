@@ -28,7 +28,7 @@ Per avviare il progetto, assicurati di avere **Docker** e **Docker Compose** ins
     docker compose up
     ```
 
-4. Il frontend sarà disponibile su [http://localhost:4200](http://localhost:4200).
+4. Il frontend sarà disponibile su [http://localhost:25846](http://localhost:25846).
 
 ## Avvertenze
 

@@ -13,6 +13,6 @@ services:
     build: TubeFetch.frontend/.
     container_name: TubeFetch.frontend
     ports:
-      - "4200:4200"
+      - "25846:25846"
     restart: unless-stopped
 
