@@ -80,7 +80,7 @@ export class HomeComponent {
   }
 
   downloadOneTrack(item:any){
-    this.apiService.downloadOneTrack(item.youtubeLink.split("=")[1].split("&")[0]).subscribe(response =>{
+    this.apiService.downloadOneTrack(item).subscribe(response =>{
       const fileUrl = URL.createObjectURL(response);
       const a = document.createElement('a');
       a.href = fileUrl;

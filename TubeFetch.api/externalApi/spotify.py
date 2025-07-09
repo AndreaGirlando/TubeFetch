@@ -63,3 +63,24 @@ def fromSpotifyLinkGetTrackInfo(url:str) -> TrackDTO:
     sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_secret = os.getenv('SPOTIPY_CLIENT_SECRET'), client_id= os.getenv('SPOTIPY_CLIENT_ID')))
     track = sp.track(url.split('/')[-1].split("?")[0])
     return getFormattedDTOfromTrackInfo(track)
+
+def fromIdGetMetadata(id: str):
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
+        client_secret=os.getenv('SPOTIPY_CLIENT_SECRET'),
+        client_id=os.getenv('SPOTIPY_CLIENT_ID')
+    ))
+
+    track = sp.track(id)
+
+    metadata = {
+        "title": track['name'],
+        "artist": ", ".join(artist['name'] for artist in track['artists']),
+        "trackNumber": track.get('track_number'),
+        "albumArtist": track['album'].get('artists', [{}])[0].get('name'),
+        "albumName": track['album'].get('name'),
+        "dataRilascio": track['album'].get('release_date'),
+        "website": track.get('external_urls', {}).get('spotify'),
+        "coverUrl": track['album'].get('images', [{}])[0].get('url')  # highest resolution
+    }
+
+    return metadata

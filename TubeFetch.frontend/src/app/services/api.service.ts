@@ -26,8 +26,8 @@ export class ApiService {
     return this.http.get(this.urlApi+"getYoutubeTrackInfo?youtubeLink="+youtubeLink)
   }
 
-  downloadOneTrack(youtubeCode:string){
-    return this.http.get(this.urlApi+"downloadOneTrack?youtubeCode="+youtubeCode,{headers: new HttpHeaders(),responseType: 'blob'})
+  downloadOneTrack(track:any){
+    return this.http.post(this.urlApi+"downloadOneTrack",track,{headers: new HttpHeaders(),responseType: 'blob'})
   }
 
   constructor(private http:HttpClient) { }

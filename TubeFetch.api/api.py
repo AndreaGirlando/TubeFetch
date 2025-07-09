@@ -1,6 +1,7 @@
 import time,os,shutil
 from flask import Flask, request, send_file, make_response
 from flask_cors import CORS
+from externalApi.dto import TrackDTO
 from externalApi.spotify import fromSpotifyLinkGetTrackInfo, getPlaylistOrAlbumData
 from externalApi.utils import zipAlbumOrPlaylist
 from externalApi.youtube import fromYoutubeLinkGetTrackInfo, fromYoutubePlaylistGetInfo
@@ -34,26 +35,27 @@ def getSpotifyTrackInfo():
 def getYoutubeTrackInfo():
     try:
         youtubeLink = request.args.get("youtubeLink")
-        # print(youtubeLink)
         res = fromYoutubeLinkGetTrackInfo(youtubeLink)
         return make_response(res.toJson(),200)
     except Exception as e:
         return make_response(f"Error: {str(e)}", 500)
 
 
-@app.route('/downloadOneTrack')
+@app.route('/downloadOneTrack', methods=['POST'])
 def downloadOneTrack():
     try:
-        uniqueId = str(int(time.time()))
-        youtubeCode = request.args.get("youtubeCode")
-        filename = download_mp3("https://www.youtube.com/watch?v=" + str(youtubeCode), uniqueId) + ".mp3"
-        # print(os.path.abspath(filename))
-        if os.path.isfile(filename):
-            return send_file(os.path.abspath(filename), as_attachment=True)
+        data = request.get_json()
+        track = TrackDTO(**data)
+
+        res = download_mp3(track)
+
+        if os.path.isfile(res["filename"]):
+            return send_file(os.path.abspath(res["filename"]), as_attachment=True)
         else:
-            return make_response(f"File '{filename}' not found.", 404)
+            return make_response(f"File '{res["filename"]}' not found.", 404)
     except Exception as e:
         return make_response(f"Error: {str(e)}", 500)
+
 
 
 #! Album/Playlist endpoints
@@ -65,6 +67,8 @@ def getSpotifyPlaylistOrAlbumInfo():
     except Exception as e:
         return make_response(f"Error: {str(e)}", 500)
 
+
+
 @app.route('/getYoutubePlaylistOrAlbumInfo')
 def getYoutubePlaylistOrAlbumInfo():
     try:
@@ -72,6 +76,8 @@ def getYoutubePlaylistOrAlbumInfo():
         return make_response(temp.toJson(), 200)
     except Exception as e:
         return make_response(f"Error: {str(e)}", 500)
+
+
 
 @app.route('/downloadSpotifyAlbumOrPlaylist')
 def downloadSpotifyAlbumOrPlaylist():
@@ -83,7 +89,7 @@ def downloadSpotifyAlbumOrPlaylist():
         tempInfo = getPlaylistOrAlbumData(spotifyLink)
         for x in tempInfo.tracks:
             try:
-                download_mp3(x.youtubeLink, uniqueId)
+                download_mp3(x, uniqueId)
             except Exception as e:
                 print(f"Errore durante il download del brano {x.youtubeLink}: {e}")
             continue
@@ -98,6 +104,8 @@ def downloadSpotifyAlbumOrPlaylist():
         return res
     except Exception as e:
         return make_response(f"Error: {str(e)}", 500)
+
+
 @app.route('/downloadYoutubeAlbumOrPlaylist')
 def downloadYoutubeAlbumOrPlaylist():
     try:
@@ -107,7 +115,7 @@ def downloadYoutubeAlbumOrPlaylist():
             return make_response(f"Errore",500)
         tempInfo = fromYoutubePlaylistGetInfo(youtubeLink)
         for x in tempInfo.tracks:
-            download_mp3(x.youtubeLink, uniqueId)
+            download_mp3(x, uniqueId)
 
         zipAlbumOrPlaylist(uniqueId)
 
