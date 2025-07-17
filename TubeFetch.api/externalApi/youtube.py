@@ -20,7 +20,8 @@ def getFormattedDTOfromTrackInfo(youtubeLink:str, index:int):
 
 
 def fromYoutubeSearchGetLink(search:str):
-    return YoutubeSearch(search, max_results=1).to_dict()[0]["url_suffix"]
+    temp = YoutubeSearch(search, max_results=1).to_dict()
+    return temp[0]["url_suffix"] if temp else None
 
 def fromYoutubePlaylistGetInfo(url:str) -> AlbumOrPlaylistInfoDTO:
 

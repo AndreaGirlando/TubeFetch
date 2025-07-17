@@ -11,3 +11,8 @@
 .logo:hover{
   transform: scale(1.05);
 }
+.custom-tooltip {
+  --bs-tooltip-bg: #ffc107;
+  --bs-tooltip-color: black;
+}
+

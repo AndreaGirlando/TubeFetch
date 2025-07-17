@@ -53,13 +53,13 @@ def download_mp3(track:TrackDTO, uniqueId = 0):
 
             metadata = fromIdGetMetadata(uniqueId)
 
-            if metadata != []:
+            if metadata != {}:
 
                 audio = EasyID3(filename)
                 audio['title'] = metadata["title"]
                 audio['artist'] = metadata["artist"]
                 audio['album'] = metadata["albumName"]
-                audio['tracknumber'] = str(metadata["trackNumber"])
+                audio['tracknumber'] = str(track.numeroTraccia)
                 audio['albumartist'] = metadata["albumArtist"]
                 audio['date'] = metadata["dataRilascio"]
                 audio['website'] = metadata["website"]

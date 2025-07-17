@@ -32,7 +32,7 @@ export class HomeComponent {
   isButtonSelected(sito:string,type:string){
     // console.log(this.params)
     if(sito == this.params.sito && type == this.params.type){
-      return "1.05"
+      return "1.10"
     }else{
       return "1.00"
     }

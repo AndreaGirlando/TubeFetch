@@ -26,6 +26,7 @@ def getSpotifyTrackInfo():
         spotifyLink = request.args.get("spotifyLink")
         print(spotifyLink)
         res = fromSpotifyLinkGetTrackInfo(spotifyLink)
+        if(res == None): return make_response("Canzone non trovata",404)
         return make_response(res.toJson(),200)
     except Exception as e:
         return make_response(f"Error: {str(e)}", 500)
